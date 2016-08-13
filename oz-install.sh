@@ -1,5 +1,5 @@
 yum update -y
-
+yum install wget -y
 wget -P /etc/yum.repos.d/ https://download.openvz.org/openvz.repo
 rpm --import http://download.openvz.org/RPM-GPG-Key-OpenVZ
 echo "Openvz Repos Downloaded"
