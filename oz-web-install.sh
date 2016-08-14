@@ -1,5 +1,5 @@
 #!/bin/sh
-
+# run: source <(curl -s https://raw.githubusercontent.com/Rahulsharma0810/Centos-Openvz-Deploy-web/master/oz-web-install.sh | sh)
 # global variables
 VERSION="2.4"
 DOWNLOAD_URL="http://ovz-web-panel.googlecode.com/files/ovz-web-panel-$VERSION.tgz"
