@@ -4,7 +4,7 @@ For Easy Deployment of Openvz and Web Panel For Openvz in Centos
 
 Run oz-install.sh First By
 
-curl https://github.com/Rahulsharma0810/Centos-Openvz-Deploy-web/blob/master/oz-install.sh | sh
+curl https://raw.githubusercontent.com/Rahulsharma0810/Centos-Openvz-Deploy-web/blob/master/oz-install.sh | sh
 
 After Automatic Reboot
 
