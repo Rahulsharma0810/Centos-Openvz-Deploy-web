@@ -1,50 +1,49 @@
-yum update -y
-yum install wget -y
-wget -P /etc/yum.repos.d/ https://download.openvz.org/openvz.repo
-rpm --import http://download.openvz.org/RPM-GPG-Key-OpenVZ
-echo "Openvz Repos Downloaded"
-sleep 2
-yum install vzkernel -y
-echo "Vzkernel Package Installed"
-sleep 2
+#!/bin/bash
+# run: source <(curl -s https://raw.githubusercontent.com/qrpike/CentOS-6-Quick-Install-Scripts/master/installOpenVZ.sh)
 
-cat >/etc/sysctl.conf <<EOL
-# On Hardware Node we generally need
-# packet forwarding enabled and proxy arp disabled
-net.ipv4.ip_forward = 1
-net.ipv6.conf.default.forwarding = 1
-net.ipv6.conf.all.forwarding = 1
-net.ipv4.conf.default.proxy_arp = 0
 
-# Enables source route verification
-net.ipv4.conf.all.rp_filter = 1
+clear
+echo 'Going to install OpenVZ for you..'
 
-# Enables the magic-sysrq key
-kernel.sysrq = 1
+echo 'installing wget..'
+yum install -y wget
 
-# We do not want all our interfaces to send redirects
-net.ipv4.conf.default.send_redirects = 1
-net.ipv4.conf.all.send_redirects = 0
-EOL
-echo "IPv4 forwarded to Conatiner"
-sleep 2
-cat >/etc/sysconfig/selinux <<EOL
-# This file controls the state of SELinux on the system.
-# SELINUX= can take one of these three values:
-#     enforcing - SELinux security policy is enforced.
-#     permissive - SELinux prints warnings instead of enforcing.
-#     disabled - No SELinux policy is loaded.
-SELINUX=disabled
-# SELINUXTYPE= can take one of these two values:
-#     targeted - Targeted processes are protected,
-#     mls - Multi Level Security protection.
-SELINUXTYPE=targeted
+echo 'now adding openvz Repo'
+wget -P /etc/yum.repos.d/ http://ftp.openvz.org/openvz.repo
+rpm --import http://ftp.openvz.org/RPM-GPG-Key-OpenVZ
 
-EOL
-echo "Selinux Good Bye !"
-sleep 2
-yum install vzctl vzquota ploop -y
-echo "Other Dependencies installed."
-sleep 2
+echo 'Installing OpenVZ Kernel'
+yum install -y vzkernel
 
-reboot
+echo 'Installing additional tools'
+yum install -y vzctl vzquota ploop
+
+echo 'Changing around some config files..'
+sed -i 's/kernel.sysrq = 0/kernel.sysrq = 1/g' /etc/sysctl.conf
+sed -i 's/net.ipv4.ip_forward = 0/net.ipv4.ip_forward = 1/g' /etc/sysctl.conf
+
+echo 'net.ipv4.conf.default.proxy_arp = 0' >> /etc/sysctl.conf
+echo 'net.ipv4.conf.all.rp_filter = 1' >> /etc/sysctl.conf
+echo 'net.ipv4.conf.default.send_redirects = 1' >> /etc/sysctl.conf
+echo 'net.ipv4.conf.all.send_redirects = 0' >> /etc/sysctl.conf
+echo 'net.ipv4.icmp_echo_ignore_broadcasts=1' >> /etc/sysctl.conf
+echo 'net.ipv4.conf.default.forwarding=1' >> /etc/sysctl.conf
+
+# Changing default VZ settings:
+# Default to Ploop & CentOS 6 - x86_64
+sed -i 's/#NEIGHBOUR_DEVS=all/NEIGHBOUR_DEVS=all/g' /etc/vz/vz.conf
+sed -i 's/#VE_LAYOUT=ploop/VE_LAYOUT=ploop/g' /etc/vz/vz.conf
+sed -i 's/centos-6-x86/centos-6-x86_64/g' /etc/vz/vz.conf
+
+
+echo 'Done with that, purging your sys configs'
+sysctl -p
+
+sed -i 's/NEIGHBOUR_DEVS=detect/NEIGHBOUR_DEVS=all/g' /etc/vz/vz.conf
+sed -i 's/SELINUX=enabled/SELINUX=disabled/g' /etc/sysconfig/selinux
+
+clear
+
+echo "OpenVZ Is now Installed.."
+/etc/init.d/iptables stop && chkconfig iptables off
+echo "iptables Stop On Boot"
