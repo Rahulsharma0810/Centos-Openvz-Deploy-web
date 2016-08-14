@@ -10,6 +10,7 @@ After Automatic Reboot
 
 Run oz-web.sh for web installer
 
+curl -s https://raw.githubusercontent.com/Rahulsharma0810/Centos-Openvz-Deploy-web/master/oz-web-install.sh | sh
 
 Go your-server-ip:3000
 username : admin
