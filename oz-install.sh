@@ -1,6 +1,5 @@
 #!/bin/bash
-# run: source <(curl -s https://raw.githubusercontent.com/qrpike/CentOS-6-Quick-Install-Scripts/master/installOpenVZ.sh)
-
+# run: source <(curl -s https://raw.githubusercontent.com/Rahulsharma0810/Centos-Openvz-Deploy-web/master/oz-install.sh | sh)
 
 clear
 echo 'Going to install OpenVZ for you..'
@@ -47,3 +46,5 @@ clear
 echo "OpenVZ Is now Installed.."
 /etc/init.d/iptables stop && chkconfig iptables off
 echo "iptables Stop On Boot"
+
+reboot
